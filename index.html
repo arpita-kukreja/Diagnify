@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnify Diet Assistant</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="chat-container">
+    <div id="chat-header">
+      <h2>Diagnify Diet Assistant</h2>
+    </div>
+    <div id="chat-box">
+      <div id="messages">
+        <!-- Chat messages will be dynamically inserted here -->
+      </div>
+    </div>
+    <div id="input-container">
+      <input type="text" id="user-input" placeholder="Ask about your diet..." />
+      <button onclick="sendMessage()">
+        <!-- Inline SVG icon for the send button -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M3.4 21.2L21.5 12 3.4 2.8v6.5L15.5 12 3.4 14.7v6.5z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <script>
+    let currentStep = 0;  // Track current step in conversation
+    let userInfo = {};    // Store user responses
+  
+    // Initial chat options
+    function getInitialOptions() {
+      return `Hello! I am the Diagnify Diet Assistant. How can I help you with your diet and food choices today?`;
+    }
+  
+    // Function to send the initial message
+    function startChat() {
+      const messagesContainer = document.getElementById('messages');
+      const botMessage = document.createElement('div');
+      botMessage.classList.add('message', 'bot-message');
+      botMessage.textContent = getInitialOptions();
+      messagesContainer.appendChild(botMessage);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  
+    // Function to send messages and handle conversation flow
+    function sendMessage() {
+      const inputField = document.getElementById('user-input');
+      const messageText = inputField.value.trim();
+      if (messageText !== '') {
+        // Add user's message
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', 'user-message');
+        messageDiv.textContent = messageText;
+        const messagesContainer = document.getElementById('messages');
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  
+        inputField.value = '';  // Clear input
+  
+        // Process response based on the current step
+        setTimeout(() => {
+          processUserResponse(messageText);
+        }, 1000);
+      }
+    }
+  
+    // Process user responses and move to next step
+    function processUserResponse(response) {
+      let botResponse = '';
+      switch (currentStep) {
+        case 0:
+          // Initial Options
+          botResponse = askHealthCondition();
+          currentStep = 1;
+          break;
+        case 1:
+          // Ask health condition
+          userInfo.healthCondition = response.toLowerCase();
+          botResponse = askAge();
+          currentStep = 2;
+          break;
+        case 2:
+          // Ask age
+          userInfo.age = response;
+          botResponse = askGender();
+          currentStep = 3;
+          break;
+        case 3:
+          // Ask gender
+          userInfo.gender = response === '1' ? 'Male' : response === '2' ? 'Female' : 'Prefer not to say';
+          botResponse = askWeightHeight();
+          currentStep = 4;
+          break;
+        case 4:
+          // Ask weight and height
+          userInfo.weightHeight = response;
+          botResponse = askAllergies();
+          currentStep = 5;
+          break;
+        case 5:
+          // Ask allergies
+          userInfo.allergies = response;
+          botResponse = generateRecommendation(userInfo.healthCondition);
+          currentStep = 0;  // Reset to start
+          break;
+        default:
+          botResponse = getInitialOptions();
+          currentStep = 0;
+      }
+  
+      // Display bot's message
+      const messagesContainer = document.getElementById('messages');
+      const botMessage = document.createElement('div');
+      botMessage.classList.add('message', 'bot-message');
+      botMessage.innerHTML = botResponse;
+      messagesContainer.appendChild(botMessage);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  
+    // Function to generate diet and food prohibitions based on health condition
+    function generateRecommendation(healthCondition) {
+  switch (healthCondition) {
+    case 'diabetes':
+      return `✔️ <strong>Recommended Diet for Diabetes</strong>:<br>
+      - <strong>Focus on:</strong><br>
+      • Whole grains, lean proteins, and vegetables.<br>
+      • Fiber-rich foods like lentils, beans, and oats.<br>
+      • Low-glycemic index foods to help control blood sugar levels.<br><br>
+      - <strong>Limit:</strong><br>
+      • Sugary and refined carbohydrate-rich foods.<br>
+      • Saturated fats and fried foods.<br><br>
+      ⚠️ <strong>Foods to Avoid for Diabetes</strong>:<br>
+      • Sugary snacks, sodas, and pastries.<br>
+      • High-fat meals, including fried and processed foods.`;
+
+    case 'hypertension':
+      return `✔️ <strong>Recommended Diet for Hypertension</strong>:<br>
+      - <strong>Focus on:</strong><br>
+      • Potassium-rich foods like bananas, leafy greens, and beans.<br>
+      • Low-sodium meals, including whole grains, fish, and vegetables.<br>
+      • DASH (Dietary Approaches to Stop Hypertension) diet guidelines.<br><br>
+      - <strong>Limit:</strong><br>
+      • High-sodium foods, especially processed snacks and meals.<br><br>
+      ⚠️ <strong>Foods to Avoid for Hypertension</strong>:<br>
+      • Salty snacks, canned soups, and processed meats.<br>
+      • High-fat dairy products and fried foods.<br>
+      • Excessive alcohol and caffeinated beverages.`;
+
+    case 'thyroid':
+      return `✔️ <strong>Recommended Diet for Thyroid Health</strong>:<br>
+      - <strong>Focus on:</strong><br>
+      • Iodine-rich foods like fish and dairy (for hypothyroidism).<br>
+      • Selenium and zinc-rich foods like nuts and seeds.<br>
+      • Lean proteins, fruits, and vegetables.<br><br>
+      - <strong>Limit:</strong><br>
+      • Soy products and cruciferous vegetables in excess (for hypothyroidism).<br><br>
+      ⚠️ <strong>Foods to Avoid for Thyroid Health</strong>:<br>
+      • Processed foods and excessive intake of soy products.<br>
+      • Cruciferous vegetables like cabbage and broccoli (in large quantities, for hypothyroidism).`;
+
+    case 'heart disease':
+      return `✔️ <strong>Recommended Diet for Heart Disease</strong>:<br>
+      - <strong>Focus on:</strong><br>
+      • Heart-healthy fats like olive oil, nuts, and avocados.<br>
+      • Fiber-rich foods from whole grains, fruits, and vegetables.<br>
+      • Lean proteins like fish, legumes, and poultry.<br><br>
+      - <strong>Limit:</strong><br>
+      • Foods high in saturated and trans fats.<br><br>
+      ⚠️ <strong>Foods to Avoid for Heart Disease</strong>:<br>
+      • Fried foods, red meat, and trans fats.<br>
+      • Sugary drinks and highly processed snacks.`;
+      case 'cbc':
+      return `✔️ <strong>Recommended Diet for Improving CBC (Complete Blood Count)</strong>:<br>
+      - <strong>Focus on:</strong><br>
+      • Iron-rich foods like lean meats, spinach, and lentils.<br>
+      • Vitamin C-rich foods to enhance iron absorption (citrus fruits, berries).<br>
+      • Folate-rich foods like beans, peas, and fortified grains.<br><br>
+      - <strong>Limit:</strong><br>
+      • Alcohol and excessive intake of processed foods.<br><br>
+      ⚠️ <strong>Foods to Avoid for CBC Issues</strong>:<br>
+      • Excessive alcohol, which can lower red blood cell count.<br>
+      • Junk food and foods with little nutritional value.`;
+
+    case 'cirrhosis':
+      return `✔️ <strong>Recommended Diet for Cirrhosis</strong>:<br>
+      - <strong>Focus on:</strong><br>
+      • High-protein foods like lean meat, fish, and legumes.<br>
+      • Fresh fruits and vegetables to boost nutrition.<br>
+      • Adequate hydration with low-sodium fluids.<br><br>
+      - <strong>Limit:</strong><br>
+      • Salt intake and avoid alcohol.<br><br>
+      ⚠️ <strong>Foods to Avoid for Cirrhosis</strong>:<br>
+      • Processed foods, high-sodium snacks.<br>
+      • Alcohol and sugary drinks.`;
+
+    case 'fatty liver':
+      return `✔️ <strong>Recommended Diet for Fatty Liver</strong>:<br>
+      - <strong>Focus on:</strong><br>
+      • Whole grains, lean proteins, and fiber-rich vegetables.<br>
+      • Healthy fats from olive oil, nuts, and avocados.<br><br>
+      - <strong>Limit:</strong><br>
+      • Saturated fats and refined sugars.<br><br>
+      ⚠️ <strong>Foods to Avoid for Fatty Liver</strong>:<br>
+      • Sugary beverages, fried foods, and alcohol.<br>
+      • High-fat and high-sugar processed snacks.`;
+
+    case 'hepatitis':
+      return `✔️ <strong>Recommended Diet for Hepatitis</strong>:<br>
+      - <strong>Focus on:</strong><br>
+      • High-protein foods like lean meats, legumes, and eggs.<br>
+      • Fiber-rich foods like fruits, vegetables, and whole grains.<br><br>
+      - <strong>Limit:</strong><br>
+      • Foods high in saturated fats and processed foods.<br><br>
+      ⚠️ <strong>Foods to Avoid for Hepatitis</strong>:<br>
+      • Alcohol and high-fat foods.<br>
+      • Sugary snacks and drinks.`;
+
+    case 'chronic kidney disease':
+      return `✔️ <strong>Recommended Diet for Chronic Kidney Disease (CKD)</strong>:<br>
+      - <strong>Focus on:</strong><br>
+      • Low-potassium foods like apples, berries, and cabbage.<br>
+      • Low-sodium meals with lean proteins (chicken, fish).<br><br>
+      - <strong>Limit:</strong><br>
+      • Phosphorus-rich foods like dairy and beans.<br><br>
+      ⚠️ <strong>Foods to Avoid for CKD</strong>:<br>
+      • High-sodium foods, processed snacks.<br>
+      • High-potassium foods like bananas and tomatoes.`;
+
+    case 'diabetic nephropathy':
+      return `✔️ <strong>Recommended Diet for Diabetic Nephropathy</strong>:<br>
+      - <strong>Focus on:</strong><br>
+      • Low-protein diet to reduce kidney workload.<br>
+      • Whole grains, vegetables, and low-sodium foods.<br><br>
+      - <strong>Limit:</strong><br>
+      • Foods high in sodium and potassium.<br><br>
+      ⚠️ <strong>Foods to Avoid for Diabetic Nephropathy</strong>:<br>
+      • Processed meats, high-sodium foods.<br>
+      • Potassium-rich foods like oranges and potatoes.`;
+
+    default:
+      return "I'm sorry, I don't have a specific recommendation for that condition. Please consult with a healthcare provider for personalized advice.";
+  }
+}
+
+  
+    // Bot question functions
+    function askHealthCondition() {
+      return "Please specify your health condition (e.g., diabetes, hypertension, thyroid, heart disease, etc.).";
+    }
+  
+    function askAge() {
+      return "What is your age?";
+    }
+  
+    function askGender() {
+      return `Please select your gender:
+      1. Male
+      2. Female
+      3. Other.`;
+    }
+  
+    function askWeightHeight() {
+      return "What is your current weight (in kg) and height (in cm)?";
+    }
+  
+    function askAllergies() {
+      return "Do you have any known food allergies (e.g., nuts, dairy, gluten)? Please list them or write no.";
+    }
+  
+    // Start chat when page loads
+    window.onload = function() {
+      startChat();
+    }
+  </script>
+  
+</body>
+</html>

@@ -1,0 +1,155 @@
+/* General container styling */
+#chat-container {
+    width: 400px;
+    margin: 50px auto;
+    background-color: #F4F8FB;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Chat header styling */
+  #chat-header {
+    background-color: #6AB04A;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #4CAF50;
+  }
+  
+  #chat-box {
+    height: 350px;
+    padding: 20px;
+    overflow-y: scroll;
+    border-bottom: 1px solid #ddd;
+    background-color: #FAFAFA;
+  }
+  
+  /* Message container */
+  #messages {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* General message bubble styling */
+  .message {
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 70%;
+    word-wrap: break-word;
+    font-size: 15px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+    line-height: 1.4;
+  }
+  
+  /* User's message bubble styling */
+  .user-message {
+    background-color: #DCF8C6;
+    align-self: flex-end;
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 18px;
+  }
+  
+  /* Bot's message bubble styling */
+  .bot-message {
+    background-color: #ffffff;
+    align-self: flex-start;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 18px;
+    color: #333;
+    border: 1px solid #E6E6E6;
+  }
+  
+  /* Input field and button container */
+  #input-container {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    border-top: 1px solid #ddd;
+    background-color: #F4F8FB;
+  }
+  
+  /* Input field styling */
+  #user-input {
+    flex-grow: 1;
+    padding: 12px;
+    border-radius: 25px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  #user-input::placeholder {
+    color: #999;
+    font-size: 14px;
+  }
+  
+  /* Send button styling */
+  button {
+    background-color: #6AB04A;
+    border: none;
+    padding: 10px;
+    margin-left: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  button img {
+    width: 20px;
+    height: 20px;
+    fill: white;
+  }
+  
+  button:hover {
+    background-color: #4CAF50;
+  }
+  
+  /* 3-dot typing animation */
+  .typing {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .dot {
+    width: 8px;
+    height: 8px;
+    margin: 0 3px;
+    border-radius: 50%;
+    background-color: #999;
+    animation: blink 1s infinite;
+  }
+  
+  .dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  
+  .dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+  
+  @keyframes blink {
+    0%, 100% {
+      opacity: 0.2;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  
+  /* Add smooth scroll behavior */
+  #chat-box {
+    scroll-behavior: smooth;
+  }
+  
